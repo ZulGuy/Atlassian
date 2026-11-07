@@ -7,5 +7,14 @@
   <button id="t-ap" type="button">Test: AP.navigator</button>
   <button id="t-open" type="button">Test: window.open</button>
   <button id="t-fb" type="button">Test: parent.__bridge</button>
+<select id="variant">
+  <option value="0">navigate {target:'url', url}</option>
+  <option value="1">navigate {url}</option>
+  <option value="2">navigate {target:'_self', url}</option>
+  <option value="3">open (рядок)</option>
+  <option value="4">open {url}</option>
+</select>
+<button id="t-run" type="button">Run variant</button>
+<button id="t-sum" type="button">Test: summary via fetchProduct</button>
 </div>
 <pre id="log"></pre>

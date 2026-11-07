@@ -117,12 +117,39 @@ setTimeout(function () {
     });
   }, 2000);
 
-  document.getElementById('t-fb').addEventListener('click', function () {
-    log('--- test: parent.__bridge.callBridge navigate (undocumented) ---');
+    var variants = [
+    ['navigate', function () { return { target: 'url', url: searchUrl() }; }],
+    ['navigate', function () { return { url: searchUrl() }; }],
+    ['navigate', function () { return { target: '_self', url: searchUrl() }; }],
+    ['open', function () { return searchUrl(); }],
+    ['open', function () { return { url: searchUrl() }; }]
+  ];
+
+  document.getElementById('t-run').addEventListener('click', function () {
+    var v = variants[document.getElementById('variant').value];
+    var payload = v[1]();
+    log('--- callBridge', v[0], JSON.stringify(payload), '---');
     safe('callBridge', function () {
-      var r = window.parent.__bridge.callBridge('navigate', searchUrl());
-      log('callBridge sent, returned:', r);
-      if (r && r.then) r.then(function (v) { log('resolved:', v); }).catch(function (e) { log('rejected:', e && e.message ? e.message : e); });
+      var r = window.parent.__bridge.callBridge(v[0], payload);
+      if (r && r.then) {
+        r.then(function (x) { log('resolved:', x); })
+         .catch(function (e) { log('rejected:', e && e.message ? e.message : e); });
+      } else { log('returned:', r); }
+    });
+  });
+
+  document.getElementById('t-sum').addEventListener('click', function () {
+    var key = window.AdaptavistBridgeContext.context.issueKey;
+    log('--- callBridge fetchProduct (guess) ---');
+    safe('fetchProduct', function () {
+      var r = window.parent.__bridge.callBridge('fetchProduct', {
+        product: 'jira',
+        restPath: '/rest/api/3/issue/' + key + '?fields=summary',
+        fetchRequestInit: { method: 'GET' }
+      });
+      Promise.resolve(r)
+        .then(function (x) { log('fetchProduct resolved:', x); })
+        .catch(function (e) { log('fetchProduct rejected:', e && e.message ? e.message : e); });
     });
   });
 })();
