@@ -38,30 +38,26 @@
   log('location.origin:', location.origin, '| sandboxed frame:', window.self !== window.top);
 
   // 2. Context and summary
-  log('--- context ---');
-  var ctx = null;
-  safe('context', function () {
-    ctx = window.AdaptavistBridgeContext && window.AdaptavistBridgeContext.context;
-    log('context:', ctx);
-  });
-
+    log('--- context ---');
+  var ctx = window.AdaptavistBridgeContext && window.AdaptavistBridgeContext.context;
+  log('context:', ctx);
   var key = ctx && ctx.issueKey;
-  if (key && window.AdaptavistBridge && window.AdaptavistBridge.request) {
-    safe('summary request', function () {
-      Promise.resolve(window.AdaptavistBridge.request({
-        url: '/rest/api/2/issue/' + encodeURIComponent(key) + '?fields=summary',
-        type: 'GET'
-      })).then(function (res) {
-        var data = parse(res);
-        var summary = data && data.fields && data.fields.summary;
+
+  if (key) {
+    safe('summary', function () {
+      Promise.resolve(window.parent.__bridge.callBridge('fetchProduct', {
+  product: 'confluence',
+  restPath: '/wiki/rest/api/search?cql=' + encodeURIComponent('text ~ "test"') + '&limit=3',
+  fetchRequestInit: { method: 'GET' }
+})).then(function (res) {
+        var summary = JSON.parse(res.body).fields.summary;
         log('summary:', summary);
-        if (summary) { q.value = summary; upd(); }
+        q.value = summary;
+        upd();
       }).catch(function (e) {
-        log('summary request failed:', e);
+        log('summary failed:', e && e.message ? e.message : e);
       });
     });
-  } else {
-    log('no issueKey or no bridge.request, summary skipped');
   }
 
   // 3. Manual tests (buttons)
