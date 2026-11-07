@@ -103,4 +103,26 @@
       log('top navigation sent');
     });
   });
+setTimeout(function () {
+    log('--- delayed check (2s) ---');
+    log('typeof AdaptavistBridge:', typeof window.AdaptavistBridge);
+    safe('window keys', function () {
+      var keys = Object.keys(window).filter(function (k) { return /bridge|adaptavist|forge|AP$/i.test(k); });
+      log('matching window keys:', keys);
+    });
+    safe('parent bridge keys', function () {
+      var b = window.parent.__bridge;
+      log('parent.__bridge keys:', Object.keys(b));
+      log('typeof callBridge:', typeof b.callBridge);
+    });
+  }, 2000);
+
+  document.getElementById('t-fb').addEventListener('click', function () {
+    log('--- test: parent.__bridge.callBridge navigate (undocumented) ---');
+    safe('callBridge', function () {
+      var r = window.parent.__bridge.callBridge('navigate', searchUrl());
+      log('callBridge sent, returned:', r);
+      if (r && r.then) r.then(function (v) { log('resolved:', v); }).catch(function (e) { log('rejected:', e && e.message ? e.message : e); });
+    });
+  });
 })();
