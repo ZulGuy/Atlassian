@@ -1,4 +1,7 @@
-body { margin: 0; background: transparent; }
-.row { display: flex; gap: 6px; padding: 8px; font-family: system-ui, sans-serif; }
+body { margin: 0; background: transparent; font-family: system-ui, sans-serif; }
+.row { display: flex; gap: 6px; padding: 8px; }
 #q { flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; }
 #go { flex-shrink: 0; padding: 6px 12px; border-radius: 4px; background: #0c66e4; color: #fff; text-decoration: none; }
+.tests { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 8px; }
+.tests button { font-size: 11px; padding: 3px 6px; }
+#log { margin: 8px; padding: 6px; background: #f4f5f7; color: #172b4d; font-size: 11px; white-space: pre-wrap; word-break: break-all; max-height: 240px; overflow: auto; }
